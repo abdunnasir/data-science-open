@@ -22,7 +22,7 @@ class LinearRegressionAPI(Resource):
             dataset = joblib.load('dataset.pkl')
 
             # Get the years in 1D format
-            years_list = dataset['YearsExperience'].tolist()
+            years_list = dataset['Years'].tolist()
 
             # Convert 1D to 2D
             years = list(np.reshape(years_list, (-1, 1)))
@@ -44,7 +44,7 @@ class LinearRegressionAPI(Resource):
                     {
                         "x": year,
                         # Get the salary of a year using index of the year.
-                        "y": dataset.loc[index, 'Salary']
+                        "y": dataset.loc[index, 'Income']
                     }
                 )
                 index = index + 1

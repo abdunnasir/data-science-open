@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 # from flask import jsonify
 
 # Importing the dataset
-dataset = pd.read_csv('Salary_Data.csv')
+dataset = pd.read_csv('Market_Data.csv')
 X = dataset.iloc[:, :-1].values
 Y = dataset.iloc[:, 1].values
 
