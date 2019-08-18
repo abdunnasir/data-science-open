@@ -1,5 +1,5 @@
 """
-    Predict income based on year
+    Predict profit using multi linear regression
     Copyright (C) 2019  Abdunnasir.K.P <abdunnasirkp@gmail.com>
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,22 +18,21 @@ import pandas as pd
 from sklearn.externals import joblib
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
-# from flask import jsonify
 
 # Importing the dataset
-dataset = pd.read_csv('Market_Data.csv')
+dataset = pd.read_csv('Salary_Data.csv')
 X = dataset.iloc[:, :-1].values
-Y = dataset.iloc[:, 1].values
+Y = dataset.iloc[:, 4].values
 
-# Splitting the dataset into the Training set and Test set
-X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size = 1/3, random_state = 0)
-
-# Fitting Simple Linear Regression to the Training set
+X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size = 0.2, random_state = 0)
 regressor = LinearRegression()
 regressor.fit(X_train, y_train)
 
+#X_train, X_test, y_train, y_test = train_test_split(X_poly, y, test_size = 0.2, random_state = 0)
+
+
 # Persist python objects into the files, so that they can be read from the api.
 joblib.dump(regressor, 'model.pkl')
-joblib.dump(dataset, 'dataset.pkl')
-
-print ('perfect')
+accuracy = (regressor.score(X_test,y_test))
+print ("Done with accuracy")
+print(accuracy * 100)

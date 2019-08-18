@@ -1,4 +1,4 @@
- """
+"""
     API to get predicted and real incomes.
 
     Copyright (C) 2019  Abdunnasir.K.P <abdunnasirkp@gmail.com>
@@ -13,7 +13,6 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-
 # Importing the libraries
 import numpy as np
 from sklearn.externals import joblib
@@ -22,53 +21,29 @@ from flask_restful import Resource, Api
 from flask import jsonify
 import json
 from flask_cors import CORS
+from flask import Flask, request
+
 
 app = Flask(__name__)
 api = Api(app)
 CORS(app)
 
 # Sample api call
-#  curl -X POST http://127.0.0.1:5000
+# curl -X POST -d "total=2.3&lead=0&manager=0&cert=0"  http://127.0.0.1:5000
 
 class LinearRegressionAPI(Resource):
     def post(self):
         try:
+            regressor = joblib.load('model.pkl')
+            total = float(request.values.get('total'))
+            lead = float(request.values.get('lead'))
+            manager = float(request.values.get('manager'))
+            cert = float(request.values.get('cert'))
+            pred_salary = regressor.predict([[total, lead,manager, cert]])
 
-            lr = joblib.load('model.pkl')
-            dataset = joblib.load('dataset.pkl')
-
-            # Get the years in 1D format
-            years_list = dataset['Years'].tolist()
-
-            # Convert 1D to 2D
-            years = list(np.reshape(years_list, (-1, 1)))
-            # Get the predicted salaries uisng simple linear regression
-            salaries = lr.predict(years)
-
-            index = 0
-            predicted = []
-            real = []
-
-            for year in years_list:
-                predicted.append(
-                    {
-                        "x": year,
-                        "y": salaries[index]
-                    }
-                )
-                real.append(
-                    {
-                        "x": year,
-                        # Get the salary of a year using index of the year.
-                        "y": dataset.loc[index, 'Income']
-                    }
-                )
-                index = index + 1
-                # End of for loop
-
+            # just a single answer, so take 0th element from the list
             response = jsonify({
-                "predicted" : predicted,
-                "real" : real
+                "predicted" : pred_salary.tolist()[0]
             })
             return response
         except Exception as e:
